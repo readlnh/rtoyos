@@ -10,6 +10,5 @@ int kernel_entry()
     readlnh_printf("%s\n", "Hi");
     int x = 10;
     printk("%d\n", x);
-    //panic("test");
     return 0;
 }
