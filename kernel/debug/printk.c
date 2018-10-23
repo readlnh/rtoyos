@@ -33,6 +33,7 @@ void readlnh_printf(const char *format, ...)
 	va_end(args);
 	printf_buffer[len] = '\0';
 	console_write(printf_buffer);
+	panic("test");
 }
 
 void printk(const char *format, ...)

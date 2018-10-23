@@ -5,9 +5,11 @@
 int kernel_entry() 
 {
     init_gdt();
+    init_debug();
     console_clear();
-    //console_write_color("Hello readlnh\n", rc_blue, rc_red);
+    readlnh_printf("%s\n", "Hi");
     int x = 10;
     printk("%d\n", x);
+    //panic("test");
     return 0;
 }
