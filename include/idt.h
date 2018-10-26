@@ -6,7 +6,7 @@
 // 初始化中断描述符表
 void init_idt();
 
-// 初始化中断描述符表
+// 中断描述符
 typedef
 struct idt_entry_t {
     uint16_t base_lo;   // 中断处理函数地址15:0
