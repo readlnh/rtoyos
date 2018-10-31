@@ -20,7 +20,52 @@ extern void idt_flush(uint32_t);
 
 void init_idt()
 {
-    bzero((uint8_t *)&interrupt_handlers, sizeof(interrupt_handler_t) * 256);
+    /*
+	 * 重新映射IRQ表
+	 * 两片级联的Intel 8259A
+	 * 主片端口 0x20 0x21
+	 * 从片端口 0xA0 0xA1
+	 * A0线用于选择操作的寄存器。在PC/AT微机系统中，
+	 * 当A0=0时芯片的端口地址是0x20(主芯片)和0xA0(从芯片）；
+	 * 当 A0=1时端口就是0x21(主芯片)和0xA1(从芯片)。
+	*/
+
+	/* 
+	 * 初始化主从片ICW1 
+	 * d0: 1-需要ICW4 0-不需要
+	 * d4: 恒为1
+	 * 0001 0001 
+	*/
+	outb(0x20, 0x11);
+	outb(0xa0, 0x11);
+
+	/*
+	 * ICW2
+	 * 设置了ICW之后，当A0=1时表示对ICW2进行设置
+	 * 主端口0x21 从端口0xa1
+	 * d7~d3为中断类型的高5位,d2~d0为任意值，一般为000
+	 * 0x20(32):0x20~0x27 0x28(40):0x28~0x2f
+	 * 主片中断号从32开始,从片从40开始
+	*/
+	outb(0x21, 0x20);
+	outb(0xa1, 0x28);
+
+	/*
+	 * ICW3
+	 * 设置主片 IR2 引脚连接从片
+	 * 告诉从片输出引脚和主片 IR2 号相连
+	*/
+	outb(0x21, 0x04);
+	outb(0xa1, 0x02);
+
+	/*
+	 * ICW4
+	 * 普通全嵌套、非缓冲、非自动结束中断方式
+	*/
+	outb(0x21, 0x01);
+	outb(0xa1, 0x01);
+	
+	bzero((uint8_t *)&interrupt_handlers, sizeof(interrupt_handler_t) * 256);
 
     idt_ptr.limit = sizeof(idt_entry_t) * 256 - 1;
     idt_ptr.base = (uint32_t)&idt_entries;
@@ -83,8 +128,39 @@ static void idt_set_gate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags
 void isr_handler(pt_regs *regs)
 {
     if(interrupt_handlers[regs->int_no]) {
+		/*
+		 * 具体的中断处理函数的原型都是void(pt_regs*),
+		 * 它们被统一组织放置在了全局的函数指针数组interrupt_handers里面。
+		 * idt_hanlder函数如判断这个中断函数是否注册,
+		 * 如果注册了会执行该函数,
+		 * 否则打印出Unhandled interrupt和中断号码。
+		*/
         interrupt_handlers[regs->int_no](regs);
     } else {
         printk_color(rc_white, rc_black, "Unhandled interrupt: %d\n", regs->int_no);
     }
+}
+
+// 注册一个中断处理函数
+void register_interrupt_handler(uint8_t n, interrupt_handler_t h)
+{
+	interrupt_handlers[n] = h;
+}
+
+// IRQ处理函数
+void irq_handler(pt_regs *regs)
+{
+	// 发送中断结束信号给 PICs
+	// 按照我们的设置，从 32 号中断起为用户自定义中断
+	// 因为单片的 Intel 8259A 芯片只能处理 8 级中断
+	// 故大于等于 40 的中断号是由从片处理的
+	if(regs->int_no >= 40) {
+		// 发送重设信号给从片
+		outb(0xa0, 0x20);
+	}
+	// 发送重设信号给主片
+	outb(0x20, 0x20);
+	if(interrupt_handlers[regs->int_no]) {
+		interrupt_handlers[regs->int_no](regs);
+	}
 }

@@ -12,7 +12,10 @@ int kernel_entry()
     console_clear();
     printk_color(rc_black, rc_cyan, "Hello world\n");
 
+    //register_interrupt_handler(255, *p);
+    
     asm volatile("int $0x3");
+    asm volatile("int $0x4");
     
     return 0;
 }
