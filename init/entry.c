@@ -2,6 +2,7 @@
 #include "debug.h"
 #include "gdt.h"
 #include "idt.h"
+#include "timer.h"
 
 int kernel_entry() 
 {
@@ -12,10 +13,14 @@ int kernel_entry()
     console_clear();
     printk_color(rc_black, rc_cyan, "Hello world\n");
 
-    //register_interrupt_handler(255, *p);
     
-    asm volatile("int $0x3");
-    asm volatile("int $0x4");
+    //init_test();
+    
+    asm volatile("int $0xff");
+
+    init_timer(200);
+
+    asm volatile("sti");
     
     return 0;
 }

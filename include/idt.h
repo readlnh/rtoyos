@@ -49,7 +49,7 @@ struct pt_regs_t {
 typedef void (*interrupt_handler_t)(pt_regs *);
 
 // 注册终端处理函数
-void regsiter_interrupt_handler(uint8_t n, interrupt_handler_t h);
+void register_interrupt_handler(uint8_t n, interrupt_handler_t h);
 
 // 调用中断处理函数
 void isr_hander(pt_regs *regs);
@@ -134,6 +134,5 @@ void irq13(); 		// 协处理器使用
 void irq14(); 		// IDE0 传输控制使用
 void irq15(); 		// IDE1 传输控制使用
 
-void p();
 
 #endif

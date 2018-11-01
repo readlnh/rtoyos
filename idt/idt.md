@@ -13,3 +13,42 @@ Linux-0.11 内核把8259A主片的 ICW3 设置为 0x04，即 S2=1，其余各位
 
 ### ICW4
 Linux-0.11内核送往8259A主芯片和从芯片的 ICW4 命令字的值均为 0x01。表示 8259A 芯片被设置成普通全嵌套、非缓冲、非自动结束中断方式，并且用于 8086 及其兼容系统。
+
+
+## 自定义中断测试
+尝试了下自定出255号中断
+代码如下
+```c
+void test_callback(pt_regs *regs)
+{
+    printk_color(rc_light_blue, rc_red, "Ttttest\n");
+}
+
+
+void init_test()
+{
+    register_interrupt_handler(255, test_callback);
+    
+}
+```
+在入口处初始化255中断，并调用int 255
+```c
+int kernel_entry() 
+{
+    init_debug();
+    init_gdt();
+    init_idt();
+    
+    console_clear();
+    printk_color(rc_black, rc_cyan, "Hello world\n");
+
+    //初始化255中断
+    init_test();
+    // 进行中断255
+    asm volatile("int $0xff");
+    
+    return 0;
+}
+```
+
+输出了Ttttest，测试成功
