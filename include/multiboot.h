@@ -66,6 +66,7 @@ struct multiboot_t {
 	 * mmap_addr是缓冲区的地址，mmap_length是缓冲区的总大小
 	 * 缓冲区由一个或者多个下面的大小/结构对 mmap_entry_t（size实际上是用来跳过下一个对的）组成
 	 */
+	/** Memory Mapping buffer **/
 	uint32_t mmap_length;		
 	uint32_t mmap_addr;
 	

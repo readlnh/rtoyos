@@ -3,7 +3,7 @@ C_OBJECTS = $(patsubst %.c, %.o, $(C_SOURCES))
 S_SOURCES = $(shell find . -name "*.s")
 S_OBJECTS = $(patsubst %.s, %.o, $(S_SOURCES))
 
-CC = gcc
+CC = gcc-4.8
 LD = ld
 ASM = nasm
 
