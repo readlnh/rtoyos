@@ -28,6 +28,19 @@ int kernel_entry()
     printk("kernel in memory used: %dKB\n", (kern_end - kern_start + 1023) / 1024);
 
     show_memory_map();
+
+    pmm_init();
+
+    printk("\nThe count of Physicak Memory Page is: %d\n\n", phy_page_count);
+
+    printk("Test pmm_alloc_page\n");
+    printk("Alloc Physical Addr: 0x%08X\n", pmm_alloc_page());
+
+    printk("Test pmm_alloc_page\n");
+    printk("Alloc Physical Addr: 0x%08X\n", pmm_alloc_page());
+
+    printk("Test pmm_alloc_page\n");
+    printk("Alloc Physical Addr: 0x%08X\n", pmm_alloc_page());
     
     return 0;
 }
