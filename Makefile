@@ -54,3 +54,9 @@ run: mykernel.iso
 .PHONY: clean
 clean:
 	rm -rf $(S_OBJECTS) $(C_OBJECTS) mykernel.bin mykernel.iso
+
+.PHONY:debug
+debug:
+	qemu-system-i386 -S -s -cdrom mykernel.iso -boot a &
+	sleep
+	cgdb -x scripts/gdbinit

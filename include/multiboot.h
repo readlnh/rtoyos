@@ -102,4 +102,6 @@ struct mmap_entry_t {
 // 声明全局的 multiboot_t * 指针
 extern multiboot_t *glb_mboot_ptr;
 
+extern multiboot_t *mboot_ptr_tmp;
+
 #endif 	// INCLUDE_MULTIBOOT_H_

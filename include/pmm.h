@@ -10,6 +10,8 @@
 
 #define PAGE_MAX_SIZE (PMM_MAX_SIZE / PMM_PAGE_SIZE)
 
+#define STACK_SIZE 8192
+
 
 // 内核在内存中的位置，在链接器里定义的
 extern uint8_t kern_start[];
