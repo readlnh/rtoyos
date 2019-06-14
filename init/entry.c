@@ -6,6 +6,7 @@
 #include "pmm.h"
 
 #include "vmm.h"
+#include "heap.h"
 
 // 内核初始化函数
 void kernel_init();
@@ -88,14 +89,16 @@ void kernel_init()
     
     printk("\nThe count of Physicak Memory Page is: %d\n\n", phy_page_count);
 
-    printk("Test pmm_alloc_page\n");
+    printk_color(rc_black, rc_light_magenta, "Test pmm_alloc_page\n");
     printk("Alloc Physical Addr: 0x%08X\n", pmm_alloc_page());
 
     printk("Test pmm_alloc_page\n");
     printk("Alloc Physical Addr: 0x%08X\n", pmm_alloc_page());
 
     printk("Test pmm_alloc_page\n");
-    printk("Alloc Physical Addr: 0x%08X\n", pmm_alloc_page());
+    printk("Alloc Physical Addr: 0x%08X\n\n", pmm_alloc_page());
+
+    test_heap();
     
     
     while (1)
